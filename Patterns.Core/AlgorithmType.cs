@@ -3,4 +3,5 @@
 public enum AlgorithmType
 {
     Life,
+    Flame,
 }

@@ -6,12 +6,14 @@ const algorithmInput: HTMLSelectElement = document.getElementById('algorithm') a
 const delayInput: HTMLInputElement = document.getElementById('delay') as HTMLInputElement;
 const widthInput: HTMLInputElement = document.getElementById('width') as HTMLInputElement;
 const heightInput: HTMLInputElement = document.getElementById('height') as HTMLInputElement;
+const sizeInput: HTMLInputElement = document.getElementById('size') as HTMLInputElement;
 
 export interface State {
     algorithm: string;
     delay: string;
     width: string;
     height: string;
+    size: string;
 }
 
 function save(): void {
@@ -29,6 +31,7 @@ function restore(): void {
     delayInput.value = state.delay;
     widthInput.value = state.width;
     heightInput.value = state.height;
+    sizeInput.value = state.size;
 }
 
 function toggleForm(form: HTMLFormElement, isEnabled: boolean): void {
@@ -53,6 +56,7 @@ export function get(): State {
         delay: delayInput.value,
         width: widthInput.value,
         height: heightInput.value,
+        size: sizeInput.value,
     };
 }
 

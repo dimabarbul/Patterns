@@ -10,6 +10,7 @@ public class AlgorithmFactory
         return type switch
         {
             AlgorithmType.Life => this.CreateWithArguments<Life>(args),
+            AlgorithmType.Flame => this.CreateWithArguments<Flame>(args),
             _ => throw new ArgumentOutOfRangeException(nameof(type)),
         };
     }
