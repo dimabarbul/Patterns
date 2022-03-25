@@ -1,5 +1,6 @@
 ﻿const signalR = require("@microsoft/signalr");
-const { render } = require('./render');
+const { render, clear } = require('./render');
+const { get } = require('./controls');
 
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl('/patterns')
@@ -15,5 +16,16 @@ export async function connect() {
 }
 
 export async function start() {
-    await hubConnection.invoke('Start', 'Life', {'width': '80', 'height': '60', 'Delay': '80'});
+    const args = get();
+
+    await hubConnection.invoke(
+        'Start',
+        args.algorithm,
+        args);
+}
+
+export async function stop() {
+    await hubConnection.invoke('Stop');
+
+    clear();
 }

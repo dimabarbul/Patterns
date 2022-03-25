@@ -30,7 +30,7 @@ public class Worker
 
     private int GetDelay(Dictionary<string,string> args)
     {
-        return int.Parse(args["Delay"]);
+        return int.Parse(args["delay"]);
     }
 
     private void OnTimer(object? state)

@@ -1,5 +1,26 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<form id="startForm" class="form d-inline">
+    <label>
+        Algorithm
+        <select id="algorithm" class="form-control">
+            <option value="Life">Life</option>
+        </select>
+    </label>
+    <label>
+        Delay
+        <input id="delay" class="form-control" type="number" value="100" min="10" step="10" />
+    </label>
+    <label>
+        Width
+        <input id="width" class="form-control" type="number" value="80" max="800" />
+    </label>
+    <label>
+        Height
+        <input id="height" class="form-control" type="number" value="60" max="600" />
+    </label>
+    <input type="submit" value="Start" />
+</form>
+<form id="stopForm" class="form d-inline disabled">
+    <input type="submit" value="Stop" />
+</form>
 
 <canvas id="canvas" width="800" height="600"></canvas>
