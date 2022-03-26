@@ -6,15 +6,15 @@ namespace Patterns.Console;
 
 internal static class Program
 {
-    private static IPrinter printer;
-    private static IAlgorithm algorithm;
+    private static IPrinter? printer;
+    private static IAlgorithm? algorithm;
 
     public static void Main(string[] args)
     {
         ProgramArgs programArgs = ParseArgs(args);
 
         algorithm = new AlgorithmFactory().Create(programArgs.AlgorithmType, programArgs.AlgorithmArguments);
-        Timer timer = new(OnTimer, null, programArgs.Delay, programArgs.Delay);
+        using Timer timer = new(OnTimer, null, programArgs.Delay, programArgs.Delay);
         printer = programArgs.PrinterType switch
         {
             PrinterType.Ascii => new AsciiPrinter(),
@@ -27,6 +27,11 @@ internal static class Program
 
     private static void OnTimer(object? state)
     {
+        if (printer == null || algorithm == null)
+        {
+            throw new Exception("Printer or algorithm hasn't been created.");
+        }
+
         printer.Print(algorithm.GetNext());
     }
 
@@ -60,17 +65,23 @@ internal static class Program
 
     private class ProgramOptions
     {
-        [Option('t', "type", Required = true)] public AlgorithmType AlgorithmType { get; set; }
+        [Option('t', "type", Required = true, HelpText = "Algorithm type: Life, Flame.")]
+        public AlgorithmType AlgorithmType { get; set; }
 
-        [Option('w', "width")] public int Width { get; set; } = 20;
+        [Option('w', "width", HelpText = "Width in cells.")]
+        public int Width { get; set; } = 20;
 
-        [Option('h', "height")] public int Height { get; set; } = 10;
+        [Option('h', "height", HelpText = "Height in cells.")]
+        public int Height { get; set; } = 10;
 
-        [Option('d', "delay")] public int Delay { get; set; } = 500;
+        [Option('d', "delay", HelpText = "Delay in milliseconds.")]
+        public int Delay { get; set; } = 500;
 
-        [Option('p', "printer")] public PrinterType PrinterType { get; set; } = PrinterType.Ascii;
+        [Option('p', "printer", HelpText = "Printer type: Ascii, Color.")]
+        public PrinterType PrinterType { get; set; } = PrinterType.Ascii;
 
-        [Option('a', "arg")] public IEnumerable<string> AlgorithmArgumentsOptions { get; set; } = new List<string>();
+        [Option('a', "arg", HelpText = "Algorithm specific arguments, e.g.: sparsity=2 ...")]
+        public IEnumerable<string> AlgorithmArgumentsOptions { get; set; } = new List<string>();
     }
 
     private class ProgramArgs
