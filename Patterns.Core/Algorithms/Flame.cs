@@ -9,6 +9,7 @@ public class Flame : IAlgorithm
     private static readonly Color[] Palette;
 
     private readonly int[,] cells;
+    private readonly int sparsity;
 
     static Flame()
     {
@@ -27,8 +28,9 @@ public class Flame : IAlgorithm
         }
     }
 
-    public Flame(int width, int height)
+    public Flame(int width, int height, int sparsity)
     {
+        this.sparsity = sparsity;
         this.cells = new int[width, height + HiddenBottomLinesCount];
         for (int x = 0; x < width; x++)
         {
@@ -50,7 +52,7 @@ public class Flame : IAlgorithm
         {
             this.cells[x, height - 1] =
                 this.cells[x, height - 2] =
-                    random.Next() % 2 == 0 ? 0 : Palette.Length - 1;
+                    (random.Next() % this.sparsity) != 0 ? 0 : Palette.Length - 1;
         }
 
         for (int y = this.cells.GetLength(1) - 2; y >= 1; y--)

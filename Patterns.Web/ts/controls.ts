@@ -3,21 +3,16 @@
 const startForm: HTMLFormElement = document.getElementById('startForm') as HTMLFormElement;
 const stopForm: HTMLFormElement = document.getElementById('stopForm') as HTMLFormElement;
 const algorithmInput: HTMLSelectElement = document.getElementById('algorithm') as HTMLSelectElement;
-const delayInput: HTMLInputElement = document.getElementById('delay') as HTMLInputElement;
-const widthInput: HTMLInputElement = document.getElementById('width') as HTMLInputElement;
-const heightInput: HTMLInputElement = document.getElementById('height') as HTMLInputElement;
-const sizeInput: HTMLInputElement = document.getElementById('size') as HTMLInputElement;
+const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 
-export interface State {
-    algorithm: string;
-    delay: string;
-    width: string;
-    height: string;
-    size: string;
-}
+export type State = { [key: string]: string };
 
 function save(): void {
-    localStorage.setItem('state', JSON.stringify(get()));
+    const state: State = get();
+    localStorage.setItem('state', JSON.stringify(state));
+
+    canvas.width = parseInt(state.width) * parseInt(state.size);
+    canvas.height = parseInt(state.height) * parseInt(state.size);
 }
 
 function restore(): void {
@@ -27,11 +22,12 @@ function restore(): void {
     }
 
     const state: State = JSON.parse(stateJson) as State;
-    algorithmInput.value = state.algorithm;
-    delayInput.value = state.delay;
-    widthInput.value = state.width;
-    heightInput.value = state.height;
-    sizeInput.value = state.size;
+
+    for (let i = 0; i < startForm.elements.length; i++) {
+        if (startForm.elements[i].id in state) {
+            (startForm.elements[i] as HTMLFormElement).value = state[startForm.elements[i].id];
+        }
+    }
 }
 
 function toggleForm(form: HTMLFormElement, isEnabled: boolean): void {
@@ -46,18 +42,21 @@ function toggleForm(form: HTMLFormElement, isEnabled: boolean): void {
 
 export function init(): void {
     restore();
+    hideCustomArgs();
     toggleForm(startForm, true);
     toggleForm(stopForm, false);
 }
 
 export function get(): State {
-    return {
-        algorithm: algorithmInput.value,
-        delay: delayInput.value,
-        width: widthInput.value,
-        height: heightInput.value,
-        size: sizeInput.value,
-    };
+    let result: State = {};
+
+    for (let i = 0; i < startForm.elements.length; i++) {
+        if (startForm.elements[i].id) {
+            result[startForm.elements[i].id] = (startForm.elements[i] as HTMLFormElement).value;
+        }
+    }
+
+    return result;
 }
 
 startForm.onsubmit = async function(e): Promise<boolean> {
@@ -81,4 +80,22 @@ stopForm.onsubmit = async function(e): Promise<boolean> {
     await signalR.stop();
 
     return false;
+}
+
+function hideCustomArgs() {
+    for (let i = 0; i < startForm.elements.length; i++) {
+        if (startForm.elements[i].tagName.toLowerCase() === 'fieldset') {
+            if (startForm.elements[i].id === algorithmInput.value) {
+                startForm.elements[i].removeAttribute('disabled');
+                startForm.elements[i].classList.remove('hidden');
+            } else {
+                startForm.elements[i].setAttribute('disabled', 'disabled');
+                startForm.elements[i].classList.add('hidden');
+            }
+        }
+    }
+}
+
+algorithmInput.onchange = function(e): void {
+    hideCustomArgs();
 }
