@@ -36,7 +36,7 @@ internal static class Program
 
         Parser.Default
             .ParseArguments<ProgramOptions>(args)
-            .WithNotParsed(_ => throw new Exception("Cannot parse."))
+            .WithNotParsed(_ => Environment.Exit(1))
             .WithParsed(pa =>
             {
                 Dictionary<string, string> algorithmArgs = pa.AlgorithmArgumentsOptions
