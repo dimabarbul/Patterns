@@ -1,0 +1,110 @@
+﻿@page "/"
+@using Patterns.Core
+@using System.Diagnostics
+
+@inject Worker worker
+@inject IJSRuntime js
+
+<PageTitle>Patterns</PageTitle>
+
+<form disabled="@(startFormDisabled ? "disabled" : string.Empty)" class="form d-inline">
+    <label>
+        Algorithm
+        <select @bind="algorithm" class="form-control">
+            @foreach (string type in Enum.GetNames<AlgorithmType>())
+            {
+                <option>@type</option>
+            }
+        </select>
+    </label>
+    <label>
+        Delay
+        <input @bind="@delay" class="form-control" type="number" min="10" step="10" />
+    </label>
+    <label>
+        Width
+        <input @bind="@width" class="form-control" type="number" max="800" />
+    </label>
+    <label>
+        Height
+        <input @bind="@height" class="form-control" type="number" max="600" />
+    </label>
+    <label>
+        Size
+        <input @bind="@size" class="form-control" type="number" min="1" max="20" />
+    </label>
+    <fieldset class="@(algorithm == AlgorithmType.Flame.ToString() ? string.Empty : "hidden")">
+        Sparsity
+        <input @bind="@sparsity" class="form-control" type="number" min="2" />
+    </fieldset>
+    <br />
+    <input type="submit" value="Start" @onclick="Start" @onclick:preventDefault />
+</form>
+<form disabled="@(stopFormDisabled ? "disabled" : string.Empty)" class="form d-inline">
+    <input type="submit" value="Stop" @onclick="Stop" @onclick:preventDefault />
+</form>
+
+<div><canvas id="canvas" width="@canvasWidth" height="@canvasHeight"></canvas></div>
+
+@code {
+
+    private IJSInProcessRuntime JsInProcess => (IJSInProcessRuntime)js;
+
+    private bool startFormDisabled;
+    private bool stopFormDisabled = true;
+
+    private string algorithm = AlgorithmType.Flame.ToString();
+    private int canvasWidth = 800;
+    private int canvasHeight = 600;
+    private int delay = 10;
+    private int width = 200;
+    private int height = 150;
+    private int size = 3;
+    private int sparsity = 2;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        JsInProcess.InvokeVoid("init");
+    }
+
+    private Task OnNewCellsAsync(int[][][] cells)
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        JsInProcess.InvokeVoid("render", cells, size);
+        Console.WriteLine($"render: {sw.ElapsedMilliseconds} ms");
+
+        return Task.CompletedTask;
+    }
+
+    private void Start()
+    {
+        startFormDisabled = true;
+        stopFormDisabled = false;
+        canvasWidth = size * width;
+        canvasHeight = size * height;
+        Console.WriteLine($"{width}x{height} x {size} x {canvasWidth}x{canvasHeight}");
+
+        worker.Start(Enum.Parse<AlgorithmType>(algorithm),
+            delay,
+            new Dictionary<string, string>()
+            {
+                { "width", width.ToString() },
+                { "height", height.ToString() },
+                { "sparsity", sparsity.ToString() },
+            },
+            OnNewCellsAsync);
+    }
+
+    private Task Stop(MouseEventArgs e)
+    {
+        startFormDisabled = true;
+        stopFormDisabled = false;
+
+        worker.Stop("");
+
+        JsInProcess.InvokeVoid("clear");
+
+        return Task.CompletedTask;
+    }
+
+}

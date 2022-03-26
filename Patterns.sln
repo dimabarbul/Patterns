@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patterns.Console", "Pattern
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patterns.Web", "Patterns.Web\Patterns.Web.csproj", "{1CB8F31C-021E-4DEC-A9C8-5BB7F1FE2D9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patterns.Wasm", "Patterns.Wasm\Patterns.Wasm.csproj", "{3F514C1E-B830-4086-9733-3DF2DC4296A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{1CB8F31C-021E-4DEC-A9C8-5BB7F1FE2D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CB8F31C-021E-4DEC-A9C8-5BB7F1FE2D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CB8F31C-021E-4DEC-A9C8-5BB7F1FE2D9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F514C1E-B830-4086-9733-3DF2DC4296A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F514C1E-B830-4086-9733-3DF2DC4296A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F514C1E-B830-4086-9733-3DF2DC4296A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F514C1E-B830-4086-9733-3DF2DC4296A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
