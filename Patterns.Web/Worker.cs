@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using Patterns.Core;
 using Patterns.Web.Hubs;
@@ -22,7 +21,7 @@ public class Worker
     public void Start(string connectionId, AlgorithmType type, int delay, Dictionary<string, string> args)
     {
         IAlgorithm algorithm = this.algorithmFactory.Create(type, args);
-        Timer timer = new(this.OnTimer, connectionId, delay, delay);
+        Timer timer = new(this.OnTimer, connectionId, 0, delay);
 
         this.data[connectionId] = new WorkerData(algorithm, timer);
     }
@@ -64,18 +63,18 @@ public class Worker
             .Wait();
     }
 
-    private string[][] SerializeCells(Cell[,] cells)
+    private int[][][] SerializeCells(Cell[,] cells)
     {
         int width = cells.GetLength(0);
         int height = cells.GetLength(1);
-        string[][] cellsArray = new string[width][];
+        int[][][] cellsArray = new int[width][][];
         for (int i = 0; i < width; i++)
         {
-            cellsArray[i] = new string[height];
+            cellsArray[i] = new int[height][];
             for (int j = 0; j < height; j++)
             {
                 Color color = cells[i, j].Color;
-                cellsArray[i][j] = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+                cellsArray[i][j] = new int[] { color.R, color.G, color.B };
             }
         }
 

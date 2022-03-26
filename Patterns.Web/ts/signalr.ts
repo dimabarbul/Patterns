@@ -7,7 +7,7 @@ const hubConnection: signalR.HubConnection = new signalR.HubConnectionBuilder()
     .withAutomaticReconnect()
     .build();
 
-hubConnection.on('NewCells', (cells: string[][]) => {
+hubConnection.on('NewCells', (cells: number[][][]) => {
     render(cells);
 });
 
