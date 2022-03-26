@@ -19,18 +19,12 @@ public class Worker
         this.hubContext = hubContext;
     }
 
-    public void Start(string connectionId, AlgorithmType type, Dictionary<string, string> args)
+    public void Start(string connectionId, AlgorithmType type, int delay, Dictionary<string, string> args)
     {
         IAlgorithm algorithm = this.algorithmFactory.Create(type, args);
-        int delay = this.GetDelay(args);
         Timer timer = new(this.OnTimer, connectionId, delay, delay);
 
         this.data[connectionId] = new WorkerData(algorithm, timer);
-    }
-
-    private int GetDelay(Dictionary<string,string> args)
-    {
-        return int.Parse(args["delay"]);
     }
 
     private void OnTimer(object? state)

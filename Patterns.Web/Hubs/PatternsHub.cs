@@ -12,9 +12,9 @@ public class PatternsHub : Hub
         this.worker = worker;
     }
 
-    public Task Start(AlgorithmType type, Dictionary<string, string> args)
+    public Task Start(AlgorithmType type, int delay, Dictionary<string, string> args)
     {
-        this.worker.Start(this.Context.ConnectionId, type, args);
+        this.worker.Start(this.Context.ConnectionId, type, delay, args);
 
         return Task.CompletedTask;
     }

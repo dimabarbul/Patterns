@@ -17,10 +17,14 @@ export async function connect(): Promise<void> {
 
 export async function start(): Promise<void> {
     const args: State = get();
+    const delay: number = parseInt(args.delay);
+
+    delete args.delay;
 
     await hubConnection.invoke(
         'Start',
         args.algorithm,
+        delay,
         args);
 }
 

@@ -3,6 +3,7 @@
 const startForm: HTMLFormElement = document.getElementById('startForm') as HTMLFormElement;
 const stopForm: HTMLFormElement = document.getElementById('stopForm') as HTMLFormElement;
 const algorithmInput: HTMLSelectElement = document.getElementById('algorithm') as HTMLSelectElement;
+const delayInput: HTMLInputElement = startForm.elements.namedItem('delay') as HTMLInputElement;
 const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 
 export type State = { [key: string]: string };
@@ -28,6 +29,7 @@ function restore(): void {
             (startForm.elements[i] as HTMLFormElement).value = state[startForm.elements[i].id];
         }
     }
+    delayInput.value = state.delay;
 }
 
 function toggleForm(form: HTMLFormElement, isEnabled: boolean): void {
@@ -55,6 +57,8 @@ export function get(): State {
             result[startForm.elements[i].id] = (startForm.elements[i] as HTMLFormElement).value;
         }
     }
+
+    result.delay = delayInput.value;
 
     return result;
 }
