@@ -59,25 +59,27 @@ public class Worker
 
     private void SendNewCells(string connectionId, Cell[,] cells)
     {
-        this.hubContext.Clients.Client(connectionId).SendAsync("NewCells", this.SerializeCells(cells))
+        this.hubContext.Clients.Client(connectionId)
+            .SendAsync("NewCells", cells.GetLength(0), cells.GetLength(1), this.ConvertCells(cells))
             .Wait();
     }
 
-    private int[][][] SerializeCells(Cell[,] cells)
+    private int[] ConvertCells(Cell[,] cells)
     {
         int width = cells.GetLength(0);
         int height = cells.GetLength(1);
-        int[][][] cellsArray = new int[width][][];
-        for (int i = 0; i < width; i++)
+        int[] numbers = new int[width * height * 3];
+        for (int j = 0; j < height; j++)
         {
-            cellsArray[i] = new int[height][];
-            for (int j = 0; j < height; j++)
+            for (int i = 0; i < width; i++)
             {
                 Color color = cells[i, j].Color;
-                cellsArray[i][j] = new int[] { color.R, color.G, color.B };
+                numbers[3 * (j * width + i)] = color.R;
+                numbers[3 * (j * width + i) + 1] = color.G;
+                numbers[3 * (j * width + i) + 2] = color.B;
             }
         }
 
-        return cellsArray;
+        return numbers;
     }
 }

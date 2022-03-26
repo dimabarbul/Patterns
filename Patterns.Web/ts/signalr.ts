@@ -1,4 +1,4 @@
-﻿import * as signalR from "@microsoft/signalr";
+﻿import * as signalR from '@microsoft/signalr';
 import { render, clear } from './render';
 import { get, State } from './controls';
 
@@ -9,13 +9,13 @@ const hubConnection: signalR.HubConnection = new signalR.HubConnectionBuilder()
 
 let isRenderInProgress: boolean = false;
 
-hubConnection.on('NewCells', (cells: number[][][]) => {
+hubConnection.on('NewCells', (width: number, height: number, cells: number[]) => {
     if (isRenderInProgress) {
         return;
     }
 
     isRenderInProgress = true;
-    render(cells);
+    render(width, height, cells);
     isRenderInProgress = false;
 });
 

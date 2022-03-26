@@ -1,32 +1,40 @@
-﻿import { get, State } from "./controls";
+﻿import { get, State } from './controls';
 
 const canvas: HTMLCanvasElement = document.getElementById('canvas') as HTMLCanvasElement;
 const context: CanvasRenderingContext2D = canvas.getContext('2d')
     || (() => { throw new Error('Canvas context is not available.'); })();
 
-function displaySingleCell(imageData: ImageData, cell: number[], column: number, row: number): void {
-    const baseColorIndex = row * 4 * imageData.width + column * 4;
-    imageData.data[baseColorIndex] = cell[0];
-    imageData.data[baseColorIndex + 1] = cell[1];
-    imageData.data[baseColorIndex + 2] = cell[2];
-    imageData.data[baseColorIndex + 3] = 255;
-}
-
-function displayCell(imageData: ImageData, cell: number[], column: number, row: number, size: number): void {
-    for (let i = 0; i < size; i++) {
-        for(let j = 0; j < size; j++) {
-            displaySingleCell(imageData, cell, column * size + i, row * size + j);
-        }
-    }
-}
-
-export function render(cells: number[][][]): void {
+export function render(width: number, height: number, cells: number[]): void {
     const state: State = get();
+    const size: number = parseInt(state.size);
+
+    if (cells.length !== width * height * 3) {
+        throw new Error('Invalid number of cells.');
+    }
+    if (canvas.width !== width * size) {
+        throw new Error('Wrong canvas width.');
+    }
+    if (canvas.height !== height * size) {
+        throw new Error('Wrong canvas height.');
+    }
+
     const imageData: ImageData = context.createImageData(canvas.width, canvas.height);
 
-    for (let i = 0; i < cells.length; i++) {
-        for (let j = 0; j < cells[i].length; j++) {
-            displayCell(imageData, cells[i][j], i, j, parseInt(state.size));
+    let imageDataIndex: number = 0;
+    let rowStartIndex: number = 0;
+    for (let i = 0; i < height; i++, rowStartIndex += width * 3) {
+        for(let j = 0; j < size; j++) {
+            for(let k = 0; k < width; k++) {
+                for(let l = 0; l < size; l++) {
+                    let cellStartIndex: number = rowStartIndex + 3 * k;
+                    imageData.data[imageDataIndex] = cells[cellStartIndex];
+                    imageData.data[imageDataIndex + 1] = cells[cellStartIndex + 1];
+                    imageData.data[imageDataIndex + 2] = cells[cellStartIndex + 2];
+                    imageData.data[imageDataIndex + 3] = 255;
+
+                    imageDataIndex += 4;
+                }
+            }
         }
     }
     context.putImageData(imageData, 0, 0);
