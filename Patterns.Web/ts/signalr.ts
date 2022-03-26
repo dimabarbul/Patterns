@@ -7,8 +7,16 @@ const hubConnection: signalR.HubConnection = new signalR.HubConnectionBuilder()
     .withAutomaticReconnect()
     .build();
 
+let isRenderInProgress: boolean = false;
+
 hubConnection.on('NewCells', (cells: number[][][]) => {
+    if (isRenderInProgress) {
+        return;
+    }
+
+    isRenderInProgress = true;
     render(cells);
+    isRenderInProgress = false;
 });
 
 export async function connect(): Promise<void> {
