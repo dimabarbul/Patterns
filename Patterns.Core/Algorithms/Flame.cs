@@ -4,29 +4,35 @@ namespace Patterns.Core.Algorithms;
 
 public class Flame : IAlgorithm
 {
+    private const int HiddenBottomLinesCount = 4;
+
     private static readonly Color[] Palette;
 
     private readonly int[,] cells;
 
     static Flame()
     {
-        Palette = new Color[192];
+        Palette = new Color[256];
         for (int i = 0; i < 64; i++)
         {
             Palette[i] = Color.FromArgb((byte)(i * 4), 0, 0);
         }
-        for (int i = 0; i < 128; i++)
+        for (int i = 0; i < 64; i++)
         {
             Palette[i + 64] = Color.FromArgb(252, (byte)(i * 2), 0);
+        }
+        for (int i = 0; i < 128; i++)
+        {
+            Palette[i + 128] = Color.FromArgb(252, (byte)(i + 128), 0);
         }
     }
 
     public Flame(int width, int height)
     {
-        this.cells = new int[width, height];
+        this.cells = new int[width, height + HiddenBottomLinesCount];
         for (int x = 0; x < width; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < height + HiddenBottomLinesCount; y++)
             {
                 this.cells[x, y] = 0;
             }
@@ -44,7 +50,7 @@ public class Flame : IAlgorithm
         {
             this.cells[x, height - 1] =
                 this.cells[x, height - 2] =
-                    random.Next() % 2 == 0 ? 0 : 191;
+                    random.Next() % 2 == 0 ? 0 : Palette.Length - 1;
         }
 
         for (int y = this.cells.GetLength(1) - 2; y >= 1; y--)
@@ -55,8 +61,8 @@ public class Flame : IAlgorithm
             }
         }
 
-        Cell[,] result = new Cell[this.cells.GetLength(0), this.cells.GetLength(1) - 2];
-        for (int y = 0; y < this.cells.GetLength(1) - 2; y++)
+        Cell[,] result = new Cell[this.cells.GetLength(0), this.cells.GetLength(1) - HiddenBottomLinesCount];
+        for (int y = 0; y < this.cells.GetLength(1) - HiddenBottomLinesCount; y++)
         {
             for (int x = 0; x < this.cells.GetLength(0); x++)
             {
